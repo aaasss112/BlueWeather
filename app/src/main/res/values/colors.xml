@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#95a5a6</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+    <color name="window_background">#FFF5F5F5</color>
+
+
+    <color name="google_red">#d62d20</color>
+    <color name="google_blue">#0057e7</color>
+    <color name="google_green">#008744</color>
+    <color name="google_yellow">#ffa700</color>
+    <color name="base_blue">#3498db</color>
+    <color name="base_white">#ffff</color>
+    <color name="base_grey">#95a5a6</color>
+    <color name="deep_grey">#7f8c8d</color>
+
+</resources>

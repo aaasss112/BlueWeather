@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">BlueWeather</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="main_title">选择城市</string>
+    <string name="temperature_metric">℃</string>
+    <string name="aqi_metric">μg/m³</string>
+    <string name="aqi_title">空气质量</string>
+    <string name="setting_title">管理城市</string>
+    <string name="select_title">添加城市</string>
+    <string name="changingsettings_title">更改配置</string>
+    <string name="tmp_setting">温度单位</string>
+    <string name="isupdate_setting">自动更新</string>
+    <string name="updatetime_setting">更新间隔</string>
+    <string name="default_hour">1小时</string>
+
+
+</resources>
