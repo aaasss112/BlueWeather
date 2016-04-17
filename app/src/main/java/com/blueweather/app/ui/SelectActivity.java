@@ -25,6 +25,7 @@ import rx.Observable;
 import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Func0;
+import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
 import java.util.ArrayList;
@@ -50,7 +51,7 @@ public class SelectActivity extends BaseActivity implements View.OnClickListener
     private City selectedCity;
     private List<Province> provincesList;
     private List<City> cityList;
-    private List<String> allCityList = new ArrayList<String>();
+    private List<City> allCityList = new ArrayList<City>();
     private SelectAdapter mAdapter;
 
     public static final int LEVEL_PROVINCE = 1;
@@ -80,7 +81,7 @@ public class SelectActivity extends BaseActivity implements View.OnClickListener
         mSearchEditText = (EditText) findViewById(R.id.search_et_input);
         mDeleteImageView = (ImageView) findViewById(R.id.search_iv_delete);
         mCrossButtonImg = (ImageView) findViewById(R.id.cross_button);
-        mTitle = (TextView)findViewById(R.id.selectcitytoolbar_title);
+        mTitle = (TextView) findViewById(R.id.selectcitytoolbar_title);
         mDeleteImageView.setVisibility(View.INVISIBLE);
         mProgressBar.setVisibility(View.VISIBLE);
         mSearchEditText.addTextChangedListener(new TextWatcher() {
@@ -147,7 +148,7 @@ public class SelectActivity extends BaseActivity implements View.OnClickListener
                 //queryProvinces();
             }
             break;
-            case R.id.cross_button:{
+            case R.id.cross_button: {
                 finish();
             }
             break;
@@ -262,7 +263,7 @@ public class SelectActivity extends BaseActivity implements View.OnClickListener
 
             @Override
             public void onNext(City city) {
-                allCityList.add(city.cityName);
+                allCityList.add(city);
             }
         };
 
@@ -280,7 +281,9 @@ public class SelectActivity extends BaseActivity implements View.OnClickListener
 
     private void searchCity(final String searchedCity) {
         dataList.clear();
-        Observer<String> observer = new Observer<String>() {
+        cityList.clear();
+
+        Observer<City> observer1 = new Observer<City>() {
             @Override
             public void onCompleted() {
                 currentLevel = LEVEL_CITY;
@@ -295,17 +298,22 @@ public class SelectActivity extends BaseActivity implements View.OnClickListener
             }
 
             @Override
-            public void onNext(String cityName) {
-                if (cityName.contains(searchedCity)) {
-                    dataList.add(cityName);
-                }
+            public void onNext(City city) {
+                cityList.add(city);
+                dataList.add(city.cityName);
             }
         };
 
         Observable.from(allCityList)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(observer);
+                .filter(new Func1<City, Boolean>() {
+                    @Override
+                    public Boolean call(City city) {
+                        return city.cityName.contains(searchedCity);
+                    }
+                })
+                .subscribe(observer1);
     }
 
 

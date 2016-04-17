@@ -95,6 +95,7 @@ public class ChangingSettingsActivity extends BaseActivity implements View.OnCli
                     default:
                         break;
                 }
+                updateTimeTv.setText(mSettings.update_time / ONEHOUR + "小时");
             }
         });
 
