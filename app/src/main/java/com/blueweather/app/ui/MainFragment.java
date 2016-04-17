@@ -290,32 +290,36 @@ public class MainFragment extends BaseFragment implements View.OnClickListener, 
         }
         LogUtils.i(TAG, "cityString is " + cityStr);
         //循环获取多个城市天气
-        for (int i = 0; i < curCityList.size(); i++) {
-            RetrofitSingleton.getApiService(getActivity().getApplicationContext()).mWeatherAPI(curCityList.get(i).cityName, Settings.KEY)
-                    .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
-                    .flatMap(new Func1<WeatherApi, Observable<Weather>>() {//将获取到的天气信息列表转换成单个天气信息
-                        @Override
-                        public Observable<Weather> call(WeatherApi weatherApi) {
-                            return Observable.just(weatherApi.mHeWeatherDataService30s.get(0));
-                        }
-                    })
-                    .filter(new Func1<Weather, Boolean>() {//过滤并存储对应的天气信息
-                        @Override
-                        public Boolean call(Weather weather) {
-                            //存入到缓存中
-                            if (weather.status.equals("ok")) {
-                                try {
-                                    mWeatherCacheUtil.putWeather(weather.basic.city, weather);
-                                } catch (IOException e) {
-                                    e.printStackTrace();
-                                }
+        Observable.from(curCityList)
+                .flatMap(new Func1<City, Observable<WeatherApi>>() {
+                    @Override
+                    public Observable<WeatherApi> call(City city) {
+                        return RetrofitSingleton.getApiService(getActivity().getApplicationContext()).mWeatherAPI(city.cityName, Settings.KEY);
+                    }
+                })
+                .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+                .flatMap(new Func1<WeatherApi, Observable<Weather>>() {
+                    @Override
+                    public Observable<Weather> call(WeatherApi weatherApi) {
+                        return Observable.just(weatherApi.mHeWeatherDataService30s.get(0));
+                    }
+                })
+                .filter(new Func1<Weather, Boolean>() {//过滤并存储对应的天气信息
+                    @Override
+                    public Boolean call(Weather weather) {
+                        //存入到缓存中
+                        if (weather.status.equals("ok")) {
+                            try {
+                                mWeatherCacheUtil.putWeather(weather.basic.city, weather);
+                            } catch (IOException e) {
+                                e.printStackTrace();
                             }
-                            LogUtils.i(TAG, "weather is " + weather.basic.city);
-                            return weather.status.equals("ok");
                         }
-                    })
-                    .subscribe(observer);
-        }
+                        LogUtils.i(TAG, "weather is " + weather.basic.city);
+                        return weather.status.equals("ok");
+                    }
+                })
+                .subscribe(observer);
     }
 
     /**
